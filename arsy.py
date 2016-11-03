@@ -116,5 +116,8 @@ def source(ctx):
     # . .bashrc
     click.echo('Sorry, you need to run `. ~/.bashrc` yourself.')
 
-if __name__ == '__main__':
+def main():
     cli(obj={})
+
+if __name__ == '__main__':
+    main()
