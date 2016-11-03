@@ -1,75 +1,120 @@
 #!/usr/bin/env python
 
 import click
-import sys
-import os
+from os import listdir, rename
+from os.path import expanduser, isfile, join
 import subprocess
 
 @click.group()
 @click.pass_context
-def click(ctx):
-    #TODO Get ons and offs & arsy path
-    ctx.obj['.bashrc'] = ''
-    ctx.obj['.arsy'] = ''
-    ctx.obj['on'] = []
-    ctx.obj['off'] = []
+def cli(ctx):
+    #TODO Allow argument for alternate .arsy location
 
-def move(old, new, *args):
+    home = expanduser('~')
+    arsy = join(home, '.arsy')
+    ctx.obj['.bashrc'] = join(home, '.bashrc')
+    ctx.obj['.arsy'] = arsy
+
+    files = sorted(f for f in listdir(arsy) if isfile(join(arsy, f)))
+    ctx.obj['files'] = files
+
+    ctx.obj['.on'] = [fname[:-3] for fname in files if fname.endswith('.on')]
+
+    ctx.obj['.off'] = [fname[:-4] for fname in files if fname.endswith('.off')]
+
+def mv(source, destination, root=None):
+    """Moves file from source to destination via os.rename.
+
+    Does not work across disks.
+    Assumes absolute paths unless root is given.
+    """
+    if root is not None:
+        src = join(root, source)
+        dst = join(root, destination)
+    else:
+        src = source
+        dst = destination
+
+    try:
+        rename(src, dst)
+        click.echo('Moved {} to {}'.format(src,dst))
+    except OSError:
+        # src does not exist or dst is protected
+        #TODO Need to figure out how to handle...
+        # ...shouldn't happen due to logic in move, but filesystem mutates.
+        pass
+
+def move(ctx, old_ext, new_ext, *args):
     #TODO: Should I sys.exit(1) if an error occurred?
     # If so, should I try processing other args before raising error?
     for arg in args:
-        full_path = os.path.join(ctx.obj['.arsy'], full_path)
-        in_old = arg in old
-        in_new = arg in new
+        in_old = arg in ctx.obj[old_ext]
+        in_new = arg in ctx.obj[new_ext]
+
         does_not_exist = not (in_old or in_new)
         good_to_move = in_old and not in_new
         already_new = in_new and not in_old
         in_both = in_old and in_new
-        
+
+        arsy = ctx.obj['.arsy']
+        old = arg + old_ext
+        new = arg + new_ext
+
         if good_to_move:
             # Great!
-            # mv arg.off arg.on
             # os.rename, since shutil.move doesn't keep metadata
+            mv(old, new, root=arsy)
 
         elif does_not_exist:
             # Alert the user. Couldn't find arg + '.off' or arg + '.on'.
+            first, second = sorted((old,new))
+            click.echo("Couldn't find {} or {} in {}."
+                    .format(first, second, arsy))
+            continue
 
         elif already_new:
             # No big deal; just let the user know
+            click.echo("{} is already {}.".format(arg, new_ext))
+            continue
 
         elif in_both:
             # Bad! Alert the user.
+            click.echo("Both {} and {} exist. No action taken!"
+                    .format(*sorted((old, new))))
+            continue
 
-@click.command()
+@cli.command()
+@click.argument('script', nargs=-1)
 @click.pass_context
-def on(ctx, *args):
-    ons = ctx.obj['on']
-    offs = ctx.obj['off']
-    move(offs, ons, *args)
+def on(ctx, script):
+    move(ctx, '.off', '.on', *script)
 
-@click.command()
+@cli.command()
+@click.argument('script', nargs=-1)
 @click.pass_context
-def off(ctx, *args):
-    ons = ctx.obj['on']
-    offs = ctx.obj['off']
-    move(ons, offs, *args)
+def off(ctx, script):
+    move(ctx, '.on', '.off', *script)
 
-
-@click.command()
+@cli.command()
 @click.pass_context
-def list(ctx, *args):
-    pass
+def list(ctx):
+    on = [f + '.on' for f in ctx.obj['.on']]
+    off = [f + '.off' for f in ctx.obj['.off']]
+    for fname in sorted(on):
+        print(fname)
+    for fname in sorted(off):
+        print(fname)
 
-@click.command()
+@cli.command()
 @click.pass_context
 def path(ctx):
     click.echo(ctx.obj['.arsy'])
 
-@click.command()
+@cli.command()
 @click.pass_context
 def source(ctx):
     # . .bashrc
-    # Guess I need home directory?
+    click.echo('Sorry, you need to run `. ~/.bashrc` yourself.')
 
-if __name__ == '__main__:
+if __name__ == '__main__':
     cli(obj={})
