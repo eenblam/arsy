@@ -11,15 +11,14 @@ def cli(ctx):
     #TODO Allow argument for alternate .arsy location
 
     home = expanduser('~')
-    arsy = join(home, '.arsy')
     ctx.obj['.bashrc'] = join(home, '.bashrc')
+    arsy = join(home, '.arsy')
     ctx.obj['.arsy'] = arsy
 
     files = sorted(f for f in listdir(arsy) if isfile(join(arsy, f)))
     ctx.obj['files'] = files
 
     ctx.obj['.on'] = [fname[:-3] for fname in files if fname.endswith('.on')]
-
     ctx.obj['.off'] = [fname[:-4] for fname in files if fname.endswith('.off')]
 
 def mv(source, destination, root=None):
@@ -45,8 +44,6 @@ def mv(source, destination, root=None):
         pass
 
 def move(ctx, old_ext, new_ext, *args):
-    #TODO: Should I sys.exit(1) if an error occurred?
-    # If so, should I try processing other args before raising error?
     for arg in args:
         in_old = arg in ctx.obj[old_ext]
         in_new = arg in ctx.obj[new_ext]
