@@ -11,15 +11,14 @@ def cli(ctx):
     #TODO Allow argument for alternate .arsy location
 
     home = expanduser('~')
-    arsy = join(home, '.arsy')
     ctx.obj['.bashrc'] = join(home, '.bashrc')
+    arsy = join(home, '.arsy')
     ctx.obj['.arsy'] = arsy
 
     files = sorted(f for f in listdir(arsy) if isfile(join(arsy, f)))
     ctx.obj['files'] = files
 
     ctx.obj['.on'] = [fname[:-3] for fname in files if fname.endswith('.on')]
-
     ctx.obj['.off'] = [fname[:-4] for fname in files if fname.endswith('.off')]
 
 def mv(source, destination, root=None):
@@ -40,13 +39,12 @@ def mv(source, destination, root=None):
         click.echo('Moved {} to {}'.format(src,dst))
     except OSError:
         # src does not exist or dst is protected
-        #TODO Need to figure out how to handle...
-        # ...shouldn't happen due to logic in move, but filesystem mutates.
-        pass
+        click.echo('Something bad happened when moving {} to {}.'
+                .format(src,dst))
+        click.echo('Source may not exist, or destination may be protected.\n'
+                'You may want to investigate.')
 
 def move(ctx, old_ext, new_ext, *args):
-    #TODO: Should I sys.exit(1) if an error occurred?
-    # If so, should I try processing other args before raising error?
     for arg in args:
         in_old = arg in ctx.obj[old_ext]
         in_new = arg in ctx.obj[new_ext]
@@ -74,7 +72,7 @@ def move(ctx, old_ext, new_ext, *args):
 
         elif already_new:
             # No big deal; just let the user know
-            click.echo("{} is already {}.".format(arg, new_ext))
+            click.echo("{} is already {}.".format(arg, new_ext[1:]))
             continue
 
         elif in_both:
@@ -101,9 +99,9 @@ def list(ctx):
     on = [f + '.on' for f in ctx.obj['.on']]
     off = [f + '.off' for f in ctx.obj['.off']]
     for fname in sorted(on):
-        print(fname)
+        click.echo(fname)
     for fname in sorted(off):
-        print(fname)
+        click.echo(fname)
 
 @cli.command()
 @click.pass_context
