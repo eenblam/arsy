@@ -71,7 +71,7 @@ def move(ctx, old_ext, new_ext, *args):
 
         elif already_new:
             # No big deal; just let the user know
-            click.echo("{} is already {}.".format(arg, new_ext))
+            click.echo("{} is already {}.".format(arg, new_ext[1:]))
             continue
 
         elif in_both:
