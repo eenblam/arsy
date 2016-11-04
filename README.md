@@ -1,6 +1,32 @@
 # Arsy
 Arsy is a tool for managing the contents of your `.bashrc`.
 
+## Installation
+You'll need Python, along with `pip` and `setuptools`.
+To install:
+```bash
+git clone https://github.com/eenblam/arsy
+cd arsy
+python setup.py install
+```
+
+## Usage
+
+Usage of existing features:
+
+```bash
+$ arsy list # Basically `ls -l ~/.arsy`
+# a.on
+# b.off
+$ arsy list on
+$ arsy on a && arsy list
+# a.on
+# b.off
+$ arsy off a b && arsy list
+# a.off
+# b.off
+```
+
 Here's what your `.bashrc` should look like:
 
 ```bash
@@ -15,23 +41,8 @@ do
 done
 ```
 
-Milestone 1 Usage:
 
-```bash
-$ arsy list # Basically `ls -l ~/.arsy`
-# a.on
-# b.off
-$ arsy list on
-$ arsy on a && arsy list
-# a.on
-# b.off
-$ arsy off a b && arsy list
-# a.off
-# b.off
-$ arsy source # Same as `. ~/.bashrc`; possibly easier to type
-```
-
-Milestone 2 Usage:
+Usage of planned features:
 
 ```bash
 $ arsy list
@@ -45,3 +56,11 @@ $ arsy thaw works-on-my-machine && arsy list
 # a.on
 # b.off
 ```
+
+## Contributing
+This is a pretty small project, but contributions are welcome.
+Tests are written in PyTest.
+PR's should come with reasonable, passing tests,
+and they shouldn't break any that previously passed.
+
+You can run the test suite with `python setup.py test`.
