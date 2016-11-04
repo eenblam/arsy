@@ -98,9 +98,9 @@ def list(ctx):
     on = [f + '.on' for f in ctx.obj['.on']]
     off = [f + '.off' for f in ctx.obj['.off']]
     for fname in sorted(on):
-        print(fname)
+        click.echo(fname)
     for fname in sorted(off):
-        print(fname)
+        click.echo(fname)
 
 @cli.command()
 @click.pass_context
