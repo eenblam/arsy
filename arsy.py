@@ -39,9 +39,10 @@ def mv(source, destination, root=None):
         click.echo('Moved {} to {}'.format(src,dst))
     except OSError:
         # src does not exist or dst is protected
-        #TODO Need to figure out how to handle...
-        # ...shouldn't happen due to logic in move, but filesystem mutates.
-        pass
+        click.echo('Something bad happened when moving {} to {}.'
+                .format(src,dst))
+        click.echo('Source may not exist, or destination may be protected.\n'
+                'You may want to investigate.')
 
 def move(ctx, old_ext, new_ext, *args):
     for arg in args:
