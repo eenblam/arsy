@@ -1,9 +1,14 @@
 # Arsy
 Arsy is a tool for managing the contents of your `.bashrc`.
 
+Basically, you replace your `.bashrc` file with a bunch of smaller scripts in `~/.arsy`.
+Arsy is just a simple tool for toggling whether or not a particular script is sourced
+whenever you start a login shell session.
+
 ## Installation
 You'll need Python, along with `pip` and `setuptools`.
 To install:
+
 ```bash
 git clone https://github.com/eenblam/arsy
 cd arsy
@@ -40,7 +45,6 @@ do
     fi
 done
 ```
-
 
 Usage of planned features:
 
