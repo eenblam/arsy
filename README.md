@@ -2,7 +2,7 @@
 Arsy is a tool for managing the contents of your `.bashrc`.
 
 Basically, you divide the contents of your `.bashrc` file into a bunch of smaller scripts in `~/.arsy`.
-Arsy is just a CLI interface for toggling whether or not a particular script is sourced
+Arsy is just a CLI for toggling whether or not a particular script is sourced
 whenever you start a login shell session.
 You could accomplish the same effect with `mv ~/.arsy/a.on ~/.arsy/a.off`;
 Arsy just shaves off a bit of typing and thinking.
