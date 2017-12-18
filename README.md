@@ -64,11 +64,3 @@ $ arsy thaw works-on-my-machine && arsy list
 # a.on
 # b.off
 ```
-
-## Contributing
-This is a pretty small project, but contributions are welcome.
-Tests are written in PyTest.
-PR's should come with reasonable, passing tests,
-and they shouldn't break any that previously passed.
-
-You can run the test suite with `python setup.py test`.
