@@ -27,7 +27,6 @@ Usage of existing features:
 $ arsy list # Basically `ls -l ~/.arsy`
 # a.on
 # b.off
-$ arsy list on
 $ arsy on a && arsy list
 # a.on
 # b.off
